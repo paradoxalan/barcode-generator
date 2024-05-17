@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Barcode generator</title>
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-5.0.2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+      <style type="text/css">
+
+        div.container h4 {
+          padding: 0;
+          margin: 0;
+          text-align: center;
+        }
+        div.bordered {
+          border: 1px solid silver;
+          margin: 3px;
+        }
+        span.chk {
+          margin-right: 30px;
+          display: inline-block;
+        }
+      </style>
+  </head>
+  <body>
+
+    <div class="container">
+
+      <h1>Gerador código de barras</h1>
+
+      <div class="" style="padding-bottom: 8px">
+
+        
+        <div class="card">
+          <div class="card-body">
+              <div class="row">
+                <div class="col-4">
+                  <div class="w3-responsive">
+                    <div class="mb-3">
+                      <label for="userInput" class="form-label">Inserir códigos de barras</label>
+                      <textarea class="form-control" id="userInput" rows="6"></textarea>
+                    </div>
+                    <button id="gerar" class="btn btn-lg btn btn-primary">Gerar</button>  
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="">
+                    <div class="row">
+                      <div class="col-md-3 description-text">Tipo</div>
+                      <div class="col-md-9">
+                        <select class="form-select barcode-select" id="barcodeType" >
+                          <option value="CODE128">CODE128 auto</option>
+                          <option value="CODE128A">CODE128 A</option>
+                          <option value="CODE128B">CODE128 B</option>
+                          <option value="CODE128C">CODE128 C</option>
+                          <option value="EAN13">EAN13</option>
+                          <option value="EAN8">EAN8</option>
+                          <option value="UPC">UPC</option>
+                          <option value="CODE39">CODE39</option>
+                          <option value="ITF14">ITF14</option>
+                          <option value="ITF">ITF</option>
+                          <option value="MSI">MSI</option>
+                          <option value="MSI10">MSI10</option>
+                          <option value="MSI11">MSI11</option>
+                          <option value="MSI1010">MSI1010</option>
+                          <option value="MSI1110">MSI1110</option>
+                          <option value="pharmacode">Pharmacode</option>
+                        </select>
+                      </div>
+                    </div>
+
+                      <!-- Bar width -->
+                      <div class="row">
+                        <div class="col-md-3 description-text"><p>Largura</p></div>
+                        <div class="col-md-8 slider-container">
+                          <input id="bar-width" type="range" min="1" max="7" step="1" value="3"/></div>
+                      </div>
+                      <!-- Height -->
+                      <div class="row">
+                        <div class="col-md-3 description-text"><p>Altura</p></div>
+                        <div class="col-md-8 col-xs-11 slider-container">
+                          <input id="bar-height" type="range" min="10" max="150" step="5" value="65"/></div>
+                      </div>
+                      <!-- Margin -->
+                      <div class="row">
+                        <div class="col-md-3 description-text"><p>Margem</p></div>
+                        <div class="col-md-8 col-xs-11 slider-container">
+                          <input id="bar-margin" type="range" min="0" max="35" step="1" value="10"/></div>
+                      </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div class="bordered">
+                <h4 id="titlePending">Pendentes <span></span> </h4>
+                <div class="container" id="barcodes">
+                </div>
+                
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="bordered">
+                <h4 id="titleScanned">Escaneados <span></span></h4>
+                <div class="container" id="barcodes-done">
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+          
+
+        </div>
+    </div>
+
+    
+
+    
+  </body>
+  <script src="js/jquery-1.12.4.min.js"></script>
+  <script src="js/jquery.hotkeys.js"></script>
+   <script src="js/bootstrap-5.0.2-bundle.min.js"></script>
+
+  <script src="js/JsBarcode.all.min.js"></script>
+  
+
+  <script type="text/javascript">
+
+    window.chkOnChange = function (event){
+        var $t = $(event.currentTarget)
+        if ($t.is(':checked')) {
+          console.log('aqui 1')
+          $t.parents('div:first').css('border', '3px solid red').addClass('alert-danger')
+        }else{
+          $t.parents('div:first').css('border', 'none').removeClass('alert-danger')
+        }
+    }
+
+    var updateTitles = function(){
+      var pend = $("#titlePending")
+      var scan = $("#titleScanned")
+      var countPend = $("#barcodes").find(".barcode-container").size()
+      var countScan = $("#barcodes-done").find(".barcode-container").size()
+      console.log(countPend)
+      console.log(countScan)
+      pend.find("span").text("- "+countPend)
+      scan.find("span").text("- "+countScan)
+    }
+
+    $(function(){
+
+      $(document).on('keypress', function (event) {
+        let key = (event.keyCode ? 
+                   event.keyCode : 
+                   event.which);
+        let char = String.fromCharCode(key)
+        var chk, chkParentDiv
+
+        if (char == 'z') {
+          chk = $("#barcodes-done :checkbox:checked:first")
+          if (chk.size()>0) {
+            chkParentDiv = chk.parents('div.barcode-container:first')
+            chkParentDiv.css('border', 'none').removeClass('alert-danger')
+            chk.prop('checked', false)
+            chk.removeAttr('checked')
+            let divMoveTo = $("#barcodes")
+            chkParentDiv.prependTo(divMoveTo)
+            console.log('aqui appendTo')
+            console.log(divMoveTo.size())
+            updateTitles()
+          }
+        }else if(char == 'x'){
+          chk = $("#barcodes :checkbox:not(:checked):first")
+          if (chk.size()>0) {
+            chkParentDiv = chk.parents('div.barcode-container:first')
+            chkParentDiv.css('border', '3px solid red').addClass('alert-danger')
+            chk.attr('checked', 'checked')
+            chk.prop('checked', true)
+
+            let divMoveTo = $("#barcodes-done")
+            chkParentDiv.prependTo(divMoveTo)
+            updateTitles()
+          }
+          
+        }
+      })
+
+      $(document).on('keypress', function (event) {
+        let key = (event.keyCode ? 
+                   event.keyCode : 
+                   event.which);
+        let char = String.fromCharCode(key)
+        var chk
+
+        if (char == 'q') {
+          chk = $("#barcodes :checkbox:checked:last")
+          if (chk.size()>0) {
+            chk.parents('div:first').css('border', 'none').removeClass('alert-danger')
+            chk.prop('checked', false)
+            chk.removeAttr('checked')
+          }
+        }else if(char == 'w'){
+          chk = $("#barcodes :checkbox:not(:checked):first")
+          if (chk.size()>0) {
+            chk.parents('div:first').css('border', '3px solid red').addClass('alert-danger')
+            chk.attr('checked', 'checked')
+            chk.prop('checked', true)
+          }
+        }
+      })
+
+      
+    })
+
+  </script>
+
+  <script src="js/script.js"></script>
+</html>
