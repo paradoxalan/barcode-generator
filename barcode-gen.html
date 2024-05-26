@@ -18,7 +18,7 @@
     <![endif]-->
       <style type="text/css">
 
-        div.container h4 {
+        h4 {
           padding: 0;
           margin: 0;
           text-align: center;
@@ -28,14 +28,14 @@
           margin: 3px;
         }
         span.chk {
-          margin-right: 30px;
+          margin-right: 3px;
           display: inline-block;
         }
       </style>
   </head>
   <body>
 
-    <div class="container">
+    <div class="">
 
       <h1>Gerador código de barras</h1>
 
@@ -51,8 +51,16 @@
                       <label for="userInput" class="form-label">Inserir códigos de barras</label>
                       <textarea class="form-control" id="userInput" rows="6"></textarea>
                     </div>
-                    <button id="gerar" class="btn btn-lg btn btn-primary">Gerar</button>  
+                    
                   </div>
+                </div>
+                <div class="col-2">
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <button id="gerar" class="btn btn-lg btn btn-primary">Gerar</button>  
                 </div>
                 <div class="col-6">
                   <div class="">
@@ -107,7 +115,7 @@
             <div class="col-6">
               <div class="bordered">
                 <h4 id="titlePending">Pendentes <span></span> </h4>
-                <div class="container" id="barcodes">
+                <div class="" id="barcodes">
                 </div>
                 
               </div>
@@ -115,7 +123,7 @@
             <div class="col-6">
               <div class="bordered">
                 <h4 id="titleScanned">Escaneados <span></span></h4>
-                <div class="container" id="barcodes-done">
+                <div class="" id="barcodes-done">
                 </div>
                 
               </div>
